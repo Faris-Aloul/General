@@ -1,0 +1,22 @@
+********************************
+
+For net-NTLMv2 (Responder)
+hashcat64.exe -a 0 -w 3 -O --force -m 5600 userhashes.txt "D:\Crackstation dictionary\realuniq.lst" -r OneRuleToRuleThemAll.rule
+
+********************************
+********************************
+
+For kerberoast (Kerberos 5 TGS-REP etype 23):
+
+hashcat64.exe -a 0 -w 3 -O --force -m 13100 userhashes.txt "D:\Crackstation dictionary\realuniq.lst" -r OneRuleToRuleThemAll.rule
+
+hashcat64.exe -a 0 --force -O -w 3 -m 13100 kerberoastHashes.txt "D:\Crackstation dictionary\realuniq.lst" 
+
+********************************
+********************************
+
+For NTDS.dit cracking:
+
+hashcat64.exe -m 1000 output/ntout --username /path/to/wordlist
+
+hashcat64.exe -a 0 -w 3 -O --force -m 1000 userhashes.txt "D:\Crackstation dictionary\realuniq.lst" -r OneRuleToRuleThemAll.rule
