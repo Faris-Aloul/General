@@ -1,0 +1,28 @@
+#script to convert words/text into hashcat mask
+from re import sub
+import re
+import sys
+
+try:
+    filename = sys.argv[1]
+except:
+	print ('You failed to provide a filename as input on the command line, you fool!')
+	sys.exit(1)  # abort, no filename provided
+
+try:
+	with open(filename) as fp:
+	   line = fp.readline()
+	   cnt = 0
+	   while line:
+		   line = fp.readline()
+		   a = re.sub("[a-z]", '?l', line)
+		   b = re.sub("[A-Z]", '?u', a)
+		   c = re.sub("[1-9]", '?d', b)
+		   d = re.sub("\W", '?s', c)
+		   print (d)
+		   cnt += 1
+except:
+	print ('Wrong filename provided! Focus, and try again')
+	sys.exit(1)  # abort, wrong filename
+
+fp.close()
