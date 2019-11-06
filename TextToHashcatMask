@@ -17,7 +17,7 @@ try:
 		   line = fp.readline()
 		   a = re.sub("[a-z]", '?l', line)
 		   b = re.sub("[A-Z]", '?u', a)
-		   c = re.sub("[1-9]", '?d', b)
+		   c = re.sub("[0-9]", '?d', b)
 		   d = re.sub("\W", '?s', c)
 		   print (d)
 		   cnt += 1
